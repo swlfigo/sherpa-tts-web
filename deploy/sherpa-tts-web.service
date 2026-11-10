@@ -1,0 +1,36 @@
+# systemd unit for the binary release.
+#
+#   sudo mkdir -p /opt/sherpa-tts-web
+#   sudo tar -xzf sherpa-tts-web-*-linux-amd64.tar.gz -C /opt/sherpa-tts-web --strip-components=1
+#   sudo install -m 600 /dev/null /etc/sherpa-tts-web.env
+#   echo 'TTS_PASSWORD=your-password' | sudo tee /etc/sherpa-tts-web.env
+#   sudo cp sherpa-tts-web.service /etc/systemd/system/
+#   sudo systemctl enable --now sherpa-tts-web
+#   journalctl -u sherpa-tts-web -f
+
+[Unit]
+Description=sherpa-tts-web, text to speech in the browser
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/opt/sherpa-tts-web/sherpa-tts-web -data-dir /var/lib/sherpa-tts-web
+EnvironmentFile=-/etc/sherpa-tts-web.env
+Environment=TTS_ADDR=:8080
+DynamicUser=yes
+StateDirectory=sherpa-tts-web
+WorkingDirectory=/var/lib/sherpa-tts-web
+Restart=on-failure
+RestartSec=5
+
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+[Install]
+WantedBy=multi-user.target

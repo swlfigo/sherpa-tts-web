@@ -1,0 +1,6 @@
+# Downloaded model and local runs
+/data/
+/dist/
+/sherpa-tts-web
+*.wav
+.DS_Store

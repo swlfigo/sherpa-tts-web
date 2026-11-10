@@ -1,0 +1,19 @@
+# TTS_PASSWORD=your-password docker compose up -d
+#
+# The model (about 400 MB) is downloaded into the volume on first start;
+# `docker compose logs -f` shows the progress.
+services:
+  tts:
+    build: .
+    image: sherpa-tts-web
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      TTS_PASSWORD: ${TTS_PASSWORD:?set TTS_PASSWORD}
+      # TTS_MODEL_URL: https://your-mirror.example.com/kokoro-multi-lang-v1_0/
+    volumes:
+      - tts-data:/data
+
+volumes:
+  tts-data:

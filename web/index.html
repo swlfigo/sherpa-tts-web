@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>文字转语音</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23D7263D'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<main class="page">
+  <header class="masthead">
+    <h1>文字转语音</h1>
+    <p class="model-pill" id="model-pill" data-state="connecting">正在连接服务器</p>
+    <p class="lede">粘贴文字，选一个声音，生成后直接试听和下载。音频只留在你的浏览器里，服务器不保存。</p>
+  </header>
+
+  <section class="notice" id="model-notice" aria-live="polite" hidden>
+    <p id="model-notice-text"></p>
+    <div class="meter" id="model-meter" hidden><div class="meter-fill" id="model-meter-fill"></div></div>
+    <p class="notice-detail" id="model-notice-detail"></p>
+  </section>
+
+  <form class="composer" id="composer" novalidate>
+    <label class="visually-hidden" for="text">要朗读的文字</label>
+    <textarea class="script" id="text" placeholder="在这里输入或粘贴要朗读的文字，中文、英文都可以。" spellcheck="false"></textarea>
+    <div class="script-foot"><span id="count">0 字</span></div>
+
+    <div class="controls">
+      <div class="field">
+        <label for="voice">声音</label>
+        <div class="field-row">
+          <select id="voice" disabled></select>
+          <button type="button" class="btn" id="preview" disabled>试听</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="speed">语速</label>
+        <div class="field-row">
+          <input type="range" id="speed" min="0.5" max="2" step="0.1" value="1">
+          <output id="speed-out" for="speed">1.0 倍</output>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="submit" class="btn btn-record" id="generate" disabled>
+        <span class="rec-dot" aria-hidden="true"></span><span>生成语音</span>
+      </button>
+      <span class="hint" id="shortcut"></span>
+    </div>
+
+    <div class="job" id="job" hidden>
+      <div class="job-line">
+        <span id="job-text" aria-live="polite"></span>
+        <button type="button" class="btn btn-quiet" id="cancel">取消</button>
+      </div>
+      <div class="meter"><div class="meter-fill" id="job-meter-fill"></div></div>
+    </div>
+
+    <p class="error" id="error" role="alert" hidden></p>
+  </form>
+
+  <section class="results" id="results" aria-labelledby="results-title" hidden>
+    <h2 id="results-title">生成的音频</h2>
+    <p class="results-note">关闭或刷新页面后会消失，需要的请先下载。</p>
+    <ol class="takes" id="takes"></ol>
+  </section>
+
+  <footer class="colophon">
+    <p>使用 <a href="https://github.com/k2-fsa/sherpa-onnx" rel="noopener noreferrer">sherpa-onnx</a> 和 Kokoro 模型在服务器上离线合成。<span id="version"></span></p>
+  </footer>
+</main>
+
+<template id="take-template">
+  <li class="take">
+    <canvas class="wave" tabindex="0" role="slider" aria-label="播放位置" aria-valuemin="0"></canvas>
+    <div class="take-row">
+      <button type="button" class="btn btn-play" data-act="play">播放</button>
+      <div class="take-meta">
+        <span class="take-name"></span>
+        <span class="take-info"></span>
+      </div>
+      <span class="take-time"></span>
+      <button type="button" class="btn" data-act="download">下载</button>
+      <button type="button" class="btn btn-quiet" data-act="remove">移除</button>
+    </div>
+  </li>
+</template>
+</body>
+</html>
